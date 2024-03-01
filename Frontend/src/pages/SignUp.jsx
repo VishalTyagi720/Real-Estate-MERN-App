@@ -5,3 +5,4 @@ export default function SignUp() {
     <div>SignUp</div>
   )
 }
+
