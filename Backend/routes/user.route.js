@@ -1,14 +1,11 @@
-import express from 'express';
-import { Router } from 'express';
+import express, { Router } from 'express';
 import { test } from '../controllers/user.controller.js';
 
 
-const router = Router();
-
-
+const userRouter = Router();
 // router.get('/test', test);
 
-router.route('/test').get(test);
+userRouter.route('/test').get(test);
 
 
-export default router;
+export default userRouter;
