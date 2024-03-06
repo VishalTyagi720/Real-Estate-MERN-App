@@ -5,7 +5,6 @@ import ApiResponse from "../utils/ApiResponse.js";
 
 
 export const signup = async (req, res, next) => {
-    // console.log(req.body);
     const {username, email, password} = req.body;
     const encryptedPassword = bcryptjs.hashSync(password, 10);
 
@@ -16,9 +15,9 @@ export const signup = async (req, res, next) => {
         res.status(201).json(new ApiResponse(200, newUser, 'New User Created Successfully'));
     }
     catch (error) {
-        // res.status(500).json(error.message)
         // next(error);  // for using the middleware
-        next(new ApiError(500, 'Duplicate user'));
+        next(new ApiError(500, 'This username or email already exists'));
+        // throw new ApiError(500, 'Duplicate user');
     }
 };
 

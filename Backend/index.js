@@ -1,11 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+// import cors from 'cors';
 import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js';
 
 
 const app = express();
+
+// app.use(cors());
 
 app.use(express.json()); //Parse incoming requests data as JSON. Using this we can send data to the server. Bu default it is not allowed
 
@@ -38,7 +41,7 @@ app.use((err, req, res, next) => {
     return res.status(statusCode).json({
         success,
         statusCode,
-        message
+        message,
     });
 });
 
