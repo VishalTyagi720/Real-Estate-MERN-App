@@ -71,3 +71,86 @@ export const signin = async (req, res, next) => {
     }
 };
 
+
+export const google = async (req, res, next) => {
+    try {
+        const user = await User.findOne({email: req.body.email})
+        if (user) {
+            const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id);
+            const loggedInUser = await User.findById(user._id).select("-_id -password -refreshToken")
+
+            const options = {
+                httpOnly: true,
+                secure: true
+            }
+
+            return res.status(200)
+            .cookie("accessToken", accessToken, options)
+            .cookie("refreshToken", refreshToken, options)
+            .json(new ApiResponse(200, loggedInUser, "User logged in Successfully"))
+        }
+        else {
+            const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const hashedPassword = bcryptjs.hashSync(generatedPassword, 10)
+            const newUser = new User({
+                username: req.body.name.split(" ").join("").toLowercase() + Math.random().toString(36).slice(-4),
+                email: req.body.email,
+                password: hashedPassword,
+                avatar: req.body.photo,
+            });
+            await newUser.save();
+            const {accessToken, refreshToken} = await generateAccessAndRefreshToken(newUser._id);
+            const SignedInUser = await User.findById(newUser._id).select("-_id -password -refreshToken")
+
+            const options = {
+                httpOnly: true,
+                secure: true
+            }
+
+            return res.status(200)
+            .cookie("accessToken", accessToken, options)
+            .cookie("refreshToken", refreshToken, options)
+            .json(new ApiResponse(200, SignedInUser, "User Signed up Successfully"))
+            // alert('User not found. Plz register');  //Add notification instead
+        }
+    } catch (error) {
+        next(new ApiError('500',))
+    }
+};
+
+
+// export const googlesignup = async (req, res, next) => {
+//     try {
+//         const user = await User.findOne({email: req.body.email})
+//         if (!user) {
+//             const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+//             const hashedPassword = bcryptjs.hashSync(generatedPassword, 10)
+//             const newUser = new User({
+//                 username: req.body.name.split(" ").join("").toLowercase() + Math.random().toString(36).slice(-4),
+//                 email: req.body.email,
+//                 password: hashedPassword,
+//                 avatar: req.body.photo,
+//             });
+//             await newUser.save();
+//             const {accessToken, refreshToken} = await generateAccessAndRefreshToken(newUser._id);
+//             const SignedInUser = await User.findById(newUser._id).select("-_id -password -refreshToken")
+
+//             const options = {
+//                 httpOnly: true,
+//                 secure: true
+//             }
+
+//             return res.status(200)
+//             .cookie("accessToken", accessToken, options)
+//             .cookie("refreshToken", refreshToken, options)
+//             .json(new ApiResponse(200, SignedInUser, "User Signed up Successfully"))
+//         }
+//         else {
+//             alert('User already exist') //Add notification instead
+
+//         }
+//     } catch (error) {
+//         next(new ApiError('500',))
+//     }
+// };
+
