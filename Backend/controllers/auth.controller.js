@@ -53,7 +53,7 @@ export const signin = async (req, res, next) => {
             return next(new ApiError(401, "Wrong credentials!!"))
         }
         const {accessToken, refreshToken} = await generateAccessAndRefreshToken(validUser._id);
-        const loggedInUser = await User.findById(validUser._id).select("-_id -password -refreshToken")
+        const loggedInUser = await User.findById(validUser._id).select("-password -refreshToken")
 
         const options = {
             httpOnly: true,

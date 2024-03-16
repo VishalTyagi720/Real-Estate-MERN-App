@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 // import cors from 'cors';
 import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js';
+import cookieParser from 'cookie-parser';
 
 
 const app = express();
@@ -12,6 +13,7 @@ const app = express();
 
 app.use(express.json()); //Parse incoming requests data as JSON. Using this we can send data to the server. Bu default it is not allowed
 
+app.use(cookieParser());
 
 dotenv.config();
 
