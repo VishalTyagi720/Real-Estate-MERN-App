@@ -35,6 +35,27 @@ export const updateUser = async (req, res, next) => {
         .json(new ApiResponse(200, updatedUser, "Account Details updated successfully"))
 
     } catch (error) {
-        next(new ApiError(500, error));
+        next(new ApiError(500, 'Something went wrong while updating the user'));
+    }
+};
+
+
+export const deleteUser = async (req, res, next) => {
+    if (req.user.id !== req.params.id) {
+        return next(new ApiError(401, 'You can only delete your own profile'));
+    }
+
+    try {
+        const deletedUser = await User.findByIdAndDelete(req.params.id);
+
+        res.clearCookie('refreshToken')
+        res.clearCookie('accessToken')
+
+        return res.status(200)
+        .json(new ApiResponse(200, deletedUser, 'User has been deleted successfully'))
+
+        
+    } catch (error) {
+        next(new ApiError(500, 'Something went wrong while deleting the user'))
     }
 };
