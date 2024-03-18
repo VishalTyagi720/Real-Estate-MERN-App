@@ -45,13 +45,20 @@ export const deleteUser = async (req, res, next) => {
         return next(new ApiError(401, 'You can only delete your own profile'));
     }
 
+    const options = {
+        httpOnly: true,
+        secure: true
+    }
+
     try {
         const deletedUser = await User.findByIdAndDelete(req.params.id);
 
-        res.clearCookie('refreshToken')
-        res.clearCookie('accessToken')
+        // res.clearCookie('refreshToken', options)
+        // res.clearCookie('accessToken', options)
 
         return res.status(200)
+        .clearCookie('refreshToken', options)
+        .clearCookie('accessToken', options)
         .json(new ApiResponse(200, deletedUser, 'User has been deleted successfully'))
 
         
