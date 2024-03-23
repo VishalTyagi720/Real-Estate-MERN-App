@@ -122,7 +122,7 @@ export default function CreateListing() {
             });
 
             const data = await response.json();
-            // console.log(data)
+            console.log(data)
             setLoading(false)
             if (data.success === false) {
                 setError(data.message)

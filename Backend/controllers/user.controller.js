@@ -2,6 +2,7 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js"
 import bcryptjs from 'bcryptjs';
 import User from "../models/user.model.js";
+import Listing from "../models/listing.model.js";
 
 
 
@@ -64,5 +65,22 @@ export const deleteUser = async (req, res, next) => {
         
     } catch (error) {
         next(new ApiError(500, 'Something went wrong while deleting the user'))
+    }
+};
+
+
+export const getUserListing = async (req, res, next) => {
+    if (req.user.id !== req.params.id) {
+        return next(new ApiError(401, 'You can only view your own listing'));
+    }
+
+    try {
+        const listings = await Listing.find({userRef: req.params.id});
+
+        return res.status(200)
+        .json(new ApiResponse(200, listings, 'listing fetched successfully'))
+        
+    } catch (error) {
+        next(new ApiError(500, 'Something went wrong while fetching the list'))
     }
 };
