@@ -17,3 +17,25 @@ export const createListing = async (req, res, next) => {
         next(new ApiError(500, error.message));
     }
 };
+
+
+export const deleteListing = async (req, res, next) => {
+    const listing = await Listing.findById(req.params.id);
+
+    if (!listing) {
+        return next(new ApiError(404, 'Listing not found'))
+    }
+    if (req.user.id !== listing.userRef) {
+        return next(new ApiError(401, 'You can only delete your own listings...'))
+    }
+
+    try {
+        const deletedListing = await Listing.findByIdAndDelete(req.params.id);
+
+        return res.status(200)
+        .json(new ApiResponse(200, deletedListing,'listing deleted successfully'))
+        
+    } catch (error) {
+        next(new ApiError(500, error.message))
+    }
+};
