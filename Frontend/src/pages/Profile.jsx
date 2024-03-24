@@ -20,8 +20,10 @@ export default function Profile() {
   const [formData , setFormData] = useState({});
   // console.log(file)
   // console.log(formData)
-  const dispatch = useDispatch();
   const [updateSuccess, setupdateSuccess] = useState(false);
+  const [showListingError, setShowListingError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
+  const dispatch = useDispatch();
 
 
   useEffect(() => {
@@ -118,6 +120,23 @@ export default function Profile() {
     }
   };
 
+  const handleShowListings = async () => {
+    try {
+      setShowListingError(false);
+      const response = await fetch(`/api/user/listings/${currentUser.data._id}`)
+      const data = await response.json();
+      if (data.success === false) {
+        setShowListingError(true);
+        return;
+      }
+      // console.log(data)
+      setUserListings(data.data)
+
+    } catch (error) {
+      setShowListingError(true);
+    }
+  };
+
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -125,6 +144,7 @@ export default function Profile() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" >
         <input type="file" ref={fileRef} hidden accept="image/*" onChange={(e) => setFile(e.target.files[0])}/>
         <img onClick={() => fileRef.current.click()} src={formData.avatar || currentUser.data.avatar} alt="profile-photo" className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"/>
+
         <p className="text-sm self-center">
           {fileUploadError ? (
             <span className="text-red-700">Error Image Upload(image size less then 2MB)</span>
@@ -136,6 +156,7 @@ export default function Profile() {
             ""
           )} 
         </p>
+
         <input type="text" placeholder="username" className="border p-3 rounded-lg" id="username" defaultValue={currentUser.data.username} onChange={handleChange}></input>
         <input type="email" placeholder="email" className="border p-3 rounded-lg" id="email" defaultValue={currentUser.data.email} onChange={handleChange}></input>
         <input type="password" placeholder="password" className="border p-3 rounded-lg" id="password" onChange={handleChange}></input>
@@ -148,7 +169,31 @@ export default function Profile() {
       </div>
       {/* <p className="text-red-700 mt-5">{error ? error : ''}</p> */}
       <p className="text-green-700 mt-5">{updateSuccess ? 'User details updated successfully' : ''}</p>
-      </div>
+      <button onClick={handleShowListings} className="text-green-700 w-full font-medium">Show Listings</button>
+      <p>{showListingError ? 'Unable to fetch Listings' : ''}</p>
+
+      {userListings && userListings.length > 0 &&
+      <div className="flex flex-col gap-4">
+        <h1 className="text-center my-7 text-2xl font-semibold">Your Listings</h1>
+        {userListings.map((listing) => {
+          return (
+            <div key={listing._id} className="border rounded-lg p-3 flex justify-between items-center gap-4">
+              <Link to={`/listing/${listing._id}`}>
+                <img src={listing.imageURLs[0]} alt="listing-image" className="h-16 w-16 object-contain"/>
+              </Link>
+              <Link to={`/listing/${listing._id}`} className="text-slate-700  font-semibold flex-1 hover:underline truncate">
+                <p>{listing.name}</p>
+              </Link>
+              <div className="flex flex-col items-center">
+                <button className="text-red-600 uppercase">Delete</button>
+                <button className="text-green-600 uppercase">edit</button>
+              </div>
+            </div>
+          )
+        })}
+      </div>}
+      
+    </div>
   )
 }
 

@@ -14,7 +14,7 @@ export default function CreateListing() {
     const [files, setFiles] = useState([]);
     // console.log(files);
     const [formData, setformData] = useState({
-        imageUrls: [],
+        imageURLs: [],
         name: "",
         description: "",
         address: "",
@@ -35,7 +35,7 @@ export default function CreateListing() {
 
 
     const handleImageSubmit = () => {
-        if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
+        if (files.length > 0 && files.length + formData.imageURLs.length < 7) {
             setUploading(true);
             setImageUploadError(false)
             const promises = [];
@@ -44,7 +44,7 @@ export default function CreateListing() {
                 promises.push(storeImage(files[i]));
             }
             Promise.all(promises).then((urls) => {
-                setformData({...formData, imageUrls: formData.imageUrls.concat(urls)});
+                setformData({...formData, imageURLs: formData.imageURLs.concat(urls)});
                 setImageUploadError(false);
                 setUploading(false)
 
@@ -86,7 +86,7 @@ export default function CreateListing() {
     };
 
     const handleRemoveImage = (index) => {
-        setformData({...formData, imageUrls: formData.imageUrls.filter((_, i) => i !== index)})
+        setformData({...formData, imageURLs: formData.imageURLs.filter((_, i) => i !== index)})
     };
     
     const handleChange = (e) => {
@@ -106,7 +106,7 @@ export default function CreateListing() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (formData.imageUrls.length < 1) return setError('Minimum one image is required')
+            if (formData.imageURLs.length < 1) return setError('Minimum one image is required')
             if (+formData.regularPrice < +formData.discountPrice) return setError('Discount price must be lower than the regular price')
             setLoading(true);
             setError(false);
@@ -122,7 +122,7 @@ export default function CreateListing() {
             });
 
             const data = await response.json();
-            console.log(data)
+            console.log(data.data)
             setLoading(false)
             if (data.success === false) {
                 setError(data.message)
@@ -206,7 +206,7 @@ export default function CreateListing() {
                     </div>
                     <p className="text-red-700 text-sm">{imageUploadError && imageUploadError}</p> {/*Add notification*/}
 
-                    {formData.imageUrls.length > 0 && formData.imageUrls.map((url, index) => {
+                    {formData.imageURLs.length > 0 && formData.imageURLs.map((url, index) => {
                         return (
                             <div key={url} className="flex justify-between p-3 border items-center">
                                 <img src={url} alt="listing-image" className="w-20 h-20 object-contain rounded-lg"/>
@@ -215,7 +215,7 @@ export default function CreateListing() {
                         )
                     })}
 
-                    <button disabled={Loading || uploading} className="p-4 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">{Loading ? 'Creating...' : 'Create Listing'}</button>
+                    <button type="submit" disabled={Loading || uploading} className="p-4 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">{Loading ? 'Creating...' : 'Create Listing'}</button>
                     {Error && <p className="text-red-700 text-sm">{Error}</p>}
                 </div>
             </form>
