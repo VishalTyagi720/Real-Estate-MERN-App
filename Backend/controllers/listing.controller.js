@@ -39,3 +39,25 @@ export const deleteListing = async (req, res, next) => {
         next(new ApiError(500, error.message))
     }
 };
+
+
+export const updateListing = async (req, res, next) => {
+    const listing = await Listing.findById(req.params.id);
+
+    if (!listing) {
+        next(new ApiError(404, 'isting not found'))
+    }
+
+    if (req.user.id !== listing.userRef) {
+        return next(new ApiError(401, 'You can only update your own listings...'))
+    }
+
+    try {
+        const updatedListing = await Listing.findByIdAndUpdate(req.params.id, req.body, {new: true});
+
+        return res.status(200).json(new ApiResponse(200, updatedListing, 'User listing updated successfully'))
+        
+    } catch (error) {
+        next(new ApiError(500, error.message));
+    }
+}; 
