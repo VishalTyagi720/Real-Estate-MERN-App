@@ -45,7 +45,7 @@ export const updateListing = async (req, res, next) => {
     const listing = await Listing.findById(req.params.id);
 
     if (!listing) {
-        next(new ApiError(404, 'isting not found'))
+        next(new ApiError(404, 'Listing not found'))
     }
 
     if (req.user.id !== listing.userRef) {
@@ -60,4 +60,20 @@ export const updateListing = async (req, res, next) => {
     } catch (error) {
         next(new ApiError(500, error.message));
     }
-}; 
+};
+
+
+export const getListing = async (req, res, next) => {
+    try {
+    const listing = await Listing.findById(req.params.id);
+
+    if (!listing) {
+        next(new ApiError(404, 'Listing not found'))
+    }
+
+    return res.status(200).json(new ApiResponse(200, listing, 'listing get successfully'))
+        
+    } catch (error) {
+        next(new ApiError(500, "Server Error"));
+    }
+};
