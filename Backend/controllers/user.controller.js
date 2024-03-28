@@ -84,3 +84,22 @@ export const getUserListing = async (req, res, next) => {
         next(new ApiError(500, 'Something went wrong while fetching the list'))
     }
 };
+
+
+export const getUser = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.params.id);
+    
+        if (!user) {
+            return next(new ApiError(404, 'User not found'))
+        }
+    
+        // const getuser = await User.findById(user._id).select("-password -refreshToken")
+    
+        return res.status(200).json(new ApiResponse(200, user, "getuser successfully"))
+        
+    } catch (error) {
+        next(new ApiError(500, 'Server error'))
+    }
+
+};
