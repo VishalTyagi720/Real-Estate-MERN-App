@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createListing, deleteListing, updateListing, getListing } from '../controllers/listing.controller.js';
+import { createListing, deleteListing, updateListing, getListing, getListings } from '../controllers/listing.controller.js';
 import { verifyJWT } from '../middlewares/auth.middleware.js';
 
 
@@ -10,6 +10,7 @@ listingRouter.route('/create').post(verifyJWT, createListing);
 listingRouter.route('/delete/:id').delete(verifyJWT, deleteListing);
 listingRouter.route('/update/:id').post(verifyJWT, updateListing);
 listingRouter.route('/get/:id').get(getListing);
+listingRouter.route('/get').get(getListings);
 
 
 
