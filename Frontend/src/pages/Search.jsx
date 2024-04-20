@@ -18,7 +18,7 @@ export default function Search() {
     const Navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [listings, setListings] = useState([]);
-    // console.log(listings)
+    console.log(listings)
 
 
     useEffect(() => {
@@ -47,7 +47,9 @@ export default function Search() {
             setLoading(true);
             const searchQuery = urlParams.toString();
             const response = await fetch(`/api/listing/get?${searchQuery}`)
+            // console.log(response)
             const data = await response.json();
+            // console.log(data.data)
             setListings(data.data);
             setLoading(false);
         }

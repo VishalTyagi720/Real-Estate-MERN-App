@@ -31,11 +31,12 @@ function OAuth() {
             })
             // console.log(response)
             const data = await response.json();
+            // console.log(data);
             if (data.success === true){
                 dispatch(signInSuccess(data));
                 Navigate('/');
             }else {
-                alert('try again after some time')
+                alert('try again later')
             }
 
         } catch (error) {
