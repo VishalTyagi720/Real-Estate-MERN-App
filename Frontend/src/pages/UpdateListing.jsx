@@ -230,7 +230,7 @@ export default function CreateListing() {
                         )
                     })}
 
-                    <button type="submit" disabled={Loading || uploading} className="p-4 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">{Loading ? 'Creating...' : 'Update Listing'}</button>
+                    <button type="submit" disabled={Loading || uploading} className="p-4 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">{Loading ? 'Updating...' : 'Update Listing'}</button>
                     {Error && <p className="text-red-700 text-sm">{Error}</p>}
                 </div>
             </form>
