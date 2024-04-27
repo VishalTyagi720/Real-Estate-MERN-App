@@ -18,6 +18,7 @@ export default function Search() {
     const Navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [listings, setListings] = useState([]);
+    const [showMore, setShowMore] = useState(false);
     console.log(listings)
 
 
@@ -45,11 +46,17 @@ export default function Search() {
 
         const fetchListings = async () => {
             setLoading(true);
+            setShowMore(false);
             const searchQuery = urlParams.toString();
             const response = await fetch(`/api/listing/get?${searchQuery}`)
             // console.log(response)
             const data = await response.json();
             // console.log(data.data)
+            if (data.data.length > 8) {
+                setShowMore(true);
+            }else {
+                setShowMore(false)
+            }
             setListings(data.data);
             setLoading(false);
         }
@@ -96,6 +103,21 @@ export default function Search() {
         // console.log(searchQuery)
         Navigate(`/search?${searchQuery}`)
     };
+
+    const onShowMoreClick = async () => {
+        const numberOfListings = listings.length
+        const startIndex = numberOfListings
+        const urlParams = new URLSearchParams(location.search)
+        urlParams.set('startIndex', startIndex);
+        const searchQuery = urlParams.toString()
+        const response = await fetch(`/api/listing/get?${searchQuery}`)
+        const data = await response.json();
+        if (data.data.length < 9) {
+            setShowMore(false);
+        }
+        setListings({...listings, ...data.data});
+    };
+
 
     return (
         <div className="flex flex-col md:flex-row">
@@ -156,6 +178,9 @@ export default function Search() {
                     {loading && <p className="text-xl text-slate-700 text-center w-full">Loading...</p>}
                     {!loading && listings && (
                         listings.map((listing) => <ListingItems key={listing._id} listing={listing} /> )
+                    )}
+                    {showMore && (
+                        <button onClick={onShowMoreClick()} className="text-green-700 p-7 hover:underline w-full">Show More</button>
                     )}
                 </div>
             </div>
